@@ -7,7 +7,6 @@ public class MovementPlayer : Humanoid
     [SerializeField] internal float speedRotation;
     [SerializeField] internal Vector3 movement;
     [SerializeField] internal Vector3 direction;
-
     private float desiredRotationAngle = 0;
 
     private Action<Vector3> OnMovementDirection { get; set; }
@@ -44,7 +43,6 @@ public class MovementPlayer : Humanoid
 
         movement = new Vector3();
         movement.Set(h, 0, v);
-
         transform.Translate(movement.normalized * speed * Time.deltaTime);
 
         if (anim == null)
@@ -82,6 +80,11 @@ public class MovementPlayer : Humanoid
         {
             transform.Rotate(Vector3.up * desiredRotationAngle * speedRotation * Time.deltaTime);
         }
+    }
+
+    public override void Jump()
+    {
+        anim.SetBool("jump",true);
     }
 
     private void OnDisable()

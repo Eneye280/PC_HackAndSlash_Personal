@@ -3,7 +3,6 @@
 public class ManagerInput : MonoBehaviour
 {
     private InputPlayer controls;
-
     [SerializeField] internal MovementPlayer movementPlayer;
 
     private void Awake()
@@ -13,6 +12,7 @@ public class ManagerInput : MonoBehaviour
         movementPlayer = GetComponent<MovementPlayer>();
 
         controls.Player.Movement.performed += ctx => movementPlayer.direction = ctx.ReadValue<Vector2>();
+        controls.Player.Jump.performed += ctx => movementPlayer.Jump();
     }
 
     private void OnDisable() => controls.Disable();
