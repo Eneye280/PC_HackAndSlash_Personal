@@ -4,10 +4,12 @@ using System;
 
 public class MovementPlayer : Humanoid
 {
+    [Range(-50,50)]
     [SerializeField] internal float speedRotation;
     [SerializeField] internal Vector3 movement;
     [SerializeField] internal Vector3 direction;
-    private float desiredRotationAngle = 0;
+
+    [SerializeField] internal float desiredRotationAngle = 0;
 
     private Action<Vector3> OnMovementDirection { get; set; }
 
@@ -21,19 +23,16 @@ public class MovementPlayer : Humanoid
         OnMovementDirection += HandleMovementDirection;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        Movement();
+
         GetMovementDirection();
 
         if (movement.magnitude > 0)
         {
             RotateAgent();
         }
-    }
-
-    private void FixedUpdate()
-    {
-        Movement();
     }
 
     public override void Movement()
@@ -84,7 +83,7 @@ public class MovementPlayer : Humanoid
 
     public override void Jump()
     {
-        anim.SetBool("jump",true);
+        anim.SetTrigger("isJump");
     }
 
     private void OnDisable()
