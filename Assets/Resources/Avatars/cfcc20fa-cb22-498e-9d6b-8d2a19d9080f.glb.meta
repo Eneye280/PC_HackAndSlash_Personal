@@ -19,5 +19,5 @@ ScriptedImporter:
         type: 3}
       specularBlend: {fileID: -6465566751694194690, guid: 09512c1ba26fe804283ec6e09112e53c,
         type: 3}
-    useLegacyClips: 0
+    useLegacyClips: 1
     interpolationMode: -1
