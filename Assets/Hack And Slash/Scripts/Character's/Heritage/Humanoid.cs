@@ -6,7 +6,5 @@ public class Humanoid : MonoBehaviour
     [SerializeField] internal float speedMovement;
 
     public virtual void Movement() { }
-    public virtual void Crouching() { }
-    public virtual void Jump() { }
 
 }

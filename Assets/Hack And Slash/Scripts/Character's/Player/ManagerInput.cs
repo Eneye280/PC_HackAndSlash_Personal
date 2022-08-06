@@ -1,18 +1,26 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ManagerInput : MonoBehaviour
 {
+    internal static event Action OnJumpPlayer;
+
     private InputPlayer controls;
-    private PlayerMovement movementPlayer;
+    private PlayerMovement playerMovement;
 
     private void Awake()
     {
         controls = new InputPlayer();
 
-        movementPlayer = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
 
-        controls.Player.Movement.performed += ctx => movementPlayer.direction = ctx.ReadValue<Vector2>();
-        controls.Player.Jump.performed += ctx => movementPlayer.Jump();
+        Inputs();
+    }
+
+    private void Inputs()
+    {
+        controls.Player.Movement.performed += ctx => playerMovement.direction = ctx.ReadValue<Vector2>();
+        controls.Player.Jump.performed += ctx => OnJumpPlayer?.Invoke();
     }
 
     private void OnDisable() => controls.Disable();
