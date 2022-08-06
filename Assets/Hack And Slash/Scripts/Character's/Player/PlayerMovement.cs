@@ -41,7 +41,7 @@ public class PlayerMovement : Humanoid
 
         movement = new Vector3();
         movement.Set(h, 0, v);
-        transform.Translate(movement.normalized * speed * Time.deltaTime);
+        transform.Translate(movement.normalized * speedMovement * Time.deltaTime);
 
         OnAddAnimationMovement?.Invoke(movement);
     }
