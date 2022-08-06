@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Unity 2021.3f1
 Packages:
 - Cinemachine
@@ -11,3 +12,6 @@ Packages:
 - ProBuilder
 - ShaderGraph
 - Visual Effect Graph
+=======
+
+>>>>>>> version_v0.1
