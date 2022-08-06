@@ -1690,6 +1690,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 699930086361290924, guid: e432d79b17089ac4daf9c8a7f42738fc,
+        type: 3}
+      propertyPath: speed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 699930086361290924, guid: e432d79b17089ac4daf9c8a7f42738fc,
+        type: 3}
+      propertyPath: speedRotation
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 699930086361290924, guid: e432d79b17089ac4daf9c8a7f42738fc,
+        type: 3}
+      propertyPath: desiredRotationAngle
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 1025729767503118153, guid: e432d79b17089ac4daf9c8a7f42738fc,
         type: 3}
       propertyPath: m_RootOrder

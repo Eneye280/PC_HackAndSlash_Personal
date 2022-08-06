@@ -1,23 +1,21 @@
 ﻿using UnityEngine;
-using Cinemachine;
 using System;
 
-public class MovementPlayer : Humanoid
+public class PlayerMovement : Humanoid
 {
+    private Action<Vector3> OnMovementDirection { get; set; }
+    internal static event Action<Vector3> OnAddAnimationMovement;
+
     [Range(-200,200)]
     [SerializeField] internal float speedRotation;
+
+    [Space]
+    [Range(0, 200)]
+    [SerializeField] internal float desiredRotationAngle = 0;
 
     internal Vector3 movement;
     internal Vector3 direction;
 
-    [SerializeField] internal float desiredRotationAngle = 0;
-
-    private Action<Vector3> OnMovementDirection { get; set; }
-
-    private void Awake()
-    {
-        anim = GetComponent<Animator>();
-    }
 
     private void OnEnable()
     {
@@ -45,20 +43,14 @@ public class MovementPlayer : Humanoid
         movement.Set(h, 0, v);
         transform.Translate(movement.normalized * speed * Time.deltaTime);
 
-        if (anim == null)
-            return;
-
-        anim.SetFloat("vertical", direction.y);
-        anim.SetFloat("horizontal", direction.x);
-
+        OnAddAnimationMovement?.Invoke(movement);
     }
+
+
     private void GetMovementDirection()
     {
         var cameraForewardDIrection = Camera.main.transform.forward;
-        Debug.DrawRay(Camera.main.transform.position, cameraForewardDIrection * 10, Color.red);
-
         var directionToMoveIn = Vector3.Scale(cameraForewardDIrection, (Vector3.right + Vector3.forward));
-        Debug.DrawRay(Camera.main.transform.position, directionToMoveIn * 10, Color.blue);
 
         OnMovementDirection?.Invoke(directionToMoveIn.normalized);
     }
@@ -80,11 +72,6 @@ public class MovementPlayer : Humanoid
         {
             transform.Rotate(Vector3.up * desiredRotationAngle * speedRotation * Time.deltaTime);
         }
-    }
-
-    public override void Jump()
-    {
-        anim.SetTrigger("isJump");
     }
 
     private void OnDisable()

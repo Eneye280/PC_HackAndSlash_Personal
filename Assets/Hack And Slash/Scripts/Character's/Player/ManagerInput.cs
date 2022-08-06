@@ -3,13 +3,13 @@
 public class ManagerInput : MonoBehaviour
 {
     private InputPlayer controls;
-    private MovementPlayer movementPlayer;
+    private PlayerMovement movementPlayer;
 
     private void Awake()
     {
         controls = new InputPlayer();
 
-        movementPlayer = GetComponent<MovementPlayer>();
+        movementPlayer = GetComponent<PlayerMovement>();
 
         controls.Player.Movement.performed += ctx => movementPlayer.direction = ctx.ReadValue<Vector2>();
         controls.Player.Jump.performed += ctx => movementPlayer.Jump();

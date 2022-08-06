@@ -2,9 +2,9 @@
 
 public class Humanoid : MonoBehaviour
 {
-    internal Animator anim;
 
-    [Range(-10,10)]
+
+    [Range(0, 50)]
     [SerializeField] internal float speed;
 
     public virtual void Movement() { }
