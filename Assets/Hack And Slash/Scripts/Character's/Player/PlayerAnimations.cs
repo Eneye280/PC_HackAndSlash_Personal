@@ -4,6 +4,9 @@ public class PlayerAnimations : MonoBehaviour
 {
     internal Animator animatorPlayer;
 
+    [Header("Parameters")]
+    [SerializeField] private string parameterRun;
+
     private void Awake() => animatorPlayer = GetComponent<Animator>();
 
     private void OnEnable()
@@ -17,9 +20,9 @@ public class PlayerAnimations : MonoBehaviour
             return;
 
         if (refVectorMovement.z != 0)
-            animatorPlayer.SetBool("isRun", true);
+            animatorPlayer.SetBool(parameterRun, true);
         else
-            animatorPlayer.SetBool("isRun", false);
+            animatorPlayer.SetBool(parameterRun, false);
     }
 
     private void OnDisable()
