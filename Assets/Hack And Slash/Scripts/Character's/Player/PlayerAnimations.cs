@@ -25,6 +25,7 @@ public class PlayerAnimations : MonoBehaviour
             animatorPlayer.SetBool(parameterRun, true);
         else
             animatorPlayer.SetBool(parameterRun, false);
+
     }
 
     private void JumpPlayer() => animatorPlayer.SetTrigger(parameterJump);
