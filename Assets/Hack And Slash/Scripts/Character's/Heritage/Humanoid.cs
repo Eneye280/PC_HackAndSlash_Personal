@@ -2,9 +2,10 @@
 
 public class Humanoid : MonoBehaviour
 {
+    [SerializeField] internal bool isMovement;
     [Range(0, 50)]
     [SerializeField] internal float speedMovement;
 
-    public virtual void Movement() { }
+    public virtual void MovementAgent() { }
 
 }

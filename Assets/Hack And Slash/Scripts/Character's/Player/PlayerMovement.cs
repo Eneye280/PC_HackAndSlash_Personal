@@ -24,9 +24,9 @@ public class PlayerMovement : Humanoid
 
     private void FixedUpdate()
     {
-        Movement();
+        MovementAgent();
 
-        GetMovementDirection();
+        GetMovementDirectionAgent();
 
         if (movement.magnitude > 0)
         {
@@ -34,7 +34,7 @@ public class PlayerMovement : Humanoid
         }
     }
 
-    public override void Movement()
+    public override void MovementAgent()
     {
         float h = direction.x;
         float v = direction.y;
@@ -44,10 +44,14 @@ public class PlayerMovement : Humanoid
         transform.Translate(movement.normalized * speedMovement * Time.deltaTime);
 
         OnAddAnimationMovement?.Invoke(movement);
+
+        if (movement.z != 0) CheckMovementAgent(true);
+        else CheckMovementAgent(false);
     }
 
+    private bool CheckMovementAgent(bool isActive) => isMovement = isActive;
 
-    private void GetMovementDirection()
+    private void GetMovementDirectionAgent()
     {
         var cameraForewardDIrection = Camera.main.transform.forward;
         var directionToMoveIn = Vector3.Scale(cameraForewardDIrection, (Vector3.right + Vector3.forward));
@@ -61,17 +65,13 @@ public class PlayerMovement : Humanoid
         var crossProduct = Vector3.Cross(transform.forward, direction).y;
 
         if (crossProduct < 0)
-        {
             desiredRotationAngle *= -1;
-        }
     }
 
     private void RotateAgent()
     {
         if (desiredRotationAngle > 10 || desiredRotationAngle < -10)
-        {
             transform.Rotate(Vector3.up * desiredRotationAngle * speedRotation * Time.deltaTime);
-        }
     }
 
     private void OnDisable()
