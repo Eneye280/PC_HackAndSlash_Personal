@@ -4,6 +4,8 @@ public class PlayerAnimations : MonoBehaviour
 {
     internal Animator animatorPlayer;
 
+    [SerializeField] private bool isJump;
+
     [Header("Parameters")]
     [SerializeField] private string parameterRun;
     [SerializeField] private string parameterJump;
@@ -13,7 +15,7 @@ public class PlayerAnimations : MonoBehaviour
     private void OnEnable()
     {
         PlayerMovement.OnAddAnimationMovement += AddAnimationMovement;
-        ManagerInput.OnJumpPlayer += JumpPlayer;
+        ManagerInput.OnJumpPlayer += AddAnimationJump;
     }
 
     private void AddAnimationMovement(Vector3 refVectorMovement)
@@ -28,12 +30,18 @@ public class PlayerAnimations : MonoBehaviour
 
     }
 
-    private void JumpPlayer() => animatorPlayer.SetTrigger(parameterJump);
+    private void AddAnimationJump()
+    {
+        isJump = true;
+
+        if(isJump)
+            animatorPlayer.SetTrigger(parameterJump);
+    }
 
 
     private void OnDisable()
     {
         PlayerMovement.OnAddAnimationMovement -= AddAnimationMovement;
-        ManagerInput.OnJumpPlayer -= JumpPlayer;
+        ManagerInput.OnJumpPlayer -= AddAnimationJump;
     }
 }
