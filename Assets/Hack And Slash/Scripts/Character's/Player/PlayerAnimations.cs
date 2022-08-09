@@ -2,38 +2,81 @@ using UnityEngine;
 
 public class PlayerAnimations : MonoBehaviour
 {
-    internal Animator animatorPlayer;
+    private Animator animatorPlayer;
 
-    [Header("Parameters")]
-    [SerializeField] private string parameterRun;
-    [SerializeField] private string parameterJump;
+    private bool isAnimator;
+    private float animationBlend;
 
-    private void Awake() => animatorPlayer = GetComponent<Animator>();
+    private int animIDSpeed;
+    private int animIDMotionSpeed;
+    private int animIDSprint;
+    private int animIDJump;
 
     private void OnEnable()
     {
-        PlayerMovement.OnAddAnimationMovement += AddAnimationMovement;
-        ManagerInput.OnJumpPlayer += JumpPlayer;
+        PlayerMovement.OnAnimationBlend += AnimationBlendMovement;
+        PlayerSprint.OnAnimationSprint += AnimationSprint;
+        PlayerJump.OnAnimationJump += AnimationJump;
     }
 
-    private void AddAnimationMovement(Vector3 refVectorMovement)
+    private void Start()
     {
-        if (animatorPlayer == null)
-            return;
+        animatorPlayer = GetComponent<Animator>();
+        isAnimator = TryGetComponent(out animatorPlayer);
 
-        if (refVectorMovement.z != 0)
-            animatorPlayer.SetBool(parameterRun, true);
-        else
-            animatorPlayer.SetBool(parameterRun, false);
-
+        AssignAnimationID();
     }
 
-    private void JumpPlayer() => animatorPlayer.SetTrigger(parameterJump);
+    private void Update()
+    {
+        isAnimator = TryGetComponent(out animatorPlayer);
+    }
 
+    private void AssignAnimationID()
+    {
+        animIDSpeed = Animator.StringToHash("Speed");
+        animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        animIDSprint = Animator.StringToHash("isSprint");
+        animIDJump = Animator.StringToHash("isJump");
+    }
+
+    private void AnimationBlendMovement(float targetSpeed, float speedChangeRate, float inputMAgnitude)
+    {
+        animationBlend = Mathf.Lerp(animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
+
+        if (animationBlend < 0.01f)
+            animationBlend = 0;
+
+        AnimationMovementAgent(inputMAgnitude);
+    }
+    private void AnimationMovementAgent(float inputMagnitude)
+    {
+        if (isAnimator)
+        {
+            animatorPlayer.SetFloat(animIDSpeed, animationBlend);
+            animatorPlayer.SetFloat(animIDMotionSpeed, inputMagnitude);
+        }
+    }
+
+    private void AnimationSprint(bool isActive)
+    {
+        if(isAnimator)
+        {
+            animatorPlayer.SetBool(animIDSprint, isActive);
+        }
+    }
+    private void AnimationJump(bool isActive)
+    {
+        if (isAnimator)
+        {
+            animatorPlayer.SetBool(animIDJump, isActive);
+        }
+    }
 
     private void OnDisable()
     {
-        PlayerMovement.OnAddAnimationMovement -= AddAnimationMovement;
-        ManagerInput.OnJumpPlayer -= JumpPlayer;
+        PlayerMovement.OnAnimationBlend -= AnimationBlendMovement;
+        PlayerSprint.OnAnimationSprint -= AnimationSprint;
+        PlayerJump.OnAnimationJump -= AnimationJump;
     }
 }

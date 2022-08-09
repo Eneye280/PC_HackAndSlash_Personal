@@ -1,81 +1,83 @@
 ﻿using UnityEngine;
 using System;
 
-public class PlayerMovement : Humanoid
+public class PlayerMovement : MonoBehaviour
 {
-    private Action<Vector3> OnMovementDirection { get; set; }
-    internal static event Action<Vector3> OnAddAnimationMovement;
+    internal static event Action<float, float, float> OnAnimationBlend;
 
-    [Range(-200,200)]
-    [SerializeField] internal float speedRotation;
+    private ManagerInput managerInput;
+    private CharacterController characterController;
 
-    [Space]
-    [Range(0, 200)]
-    [SerializeField] internal float desiredRotationAngle = 0;
+    [Header("Camera")]
+    [SerializeField] private Camera mainCamera;
 
-    internal Vector3 movement;
-    internal Vector3 direction;
+    [Header("Parameter's")]
+    [SerializeField][Range(0,50)] private float speedAgent;
+    [SerializeField][Range(0,50)] private float speedSprintAgent;
+    [SerializeField][Range(0,50)] private float speedChangeRate;
+    [SerializeField][Range(0,10)] private float rotationSmoothTime;
 
+    private float speed;
+    private float targetRotation;
+    private float rotationVelocity;
+    private float verticalVelocity;
 
-    private void OnEnable()
+    private void Start()
     {
-        OnMovementDirection += HandleMovementDirection;
+        managerInput = GetComponent<ManagerInput>();
+        characterController = GetComponent<CharacterController>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        Movement();
+        MovementAgent();
+    }
 
-        GetMovementDirection();
+    private void MovementAgent()
+    {
+        float targetSpeed = managerInput.isSprint ? speedSprintAgent : speedAgent;
 
-        if (movement.magnitude > 0)
+        if (managerInput.movementAgent == Vector2.zero) 
+            targetSpeed = 0f;
+
+        float currentHorizontalSpeed = new Vector3(characterController.velocity.x , 0f, characterController.velocity.z).magnitude;
+
+        float speedOffSet = .1f;
+        float inputMagnitude = managerInput.isAnalogMovement ? managerInput.movementAgent.magnitude : 1f;
+
+        if(currentHorizontalSpeed < targetSpeed - speedOffSet || currentHorizontalSpeed > targetSpeed + speedOffSet)
         {
-            RotateAgent();
+            speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
+            speed = Mathf.Round(speed * 1000f) / 1000f;
+        }
+        else
+        {
+            speed = targetSpeed;
+        }
+
+        RotationAgent();
+        DirectionAgent();
+
+        OnAnimationBlend?.Invoke(targetSpeed, speedChangeRate, inputMagnitude);
+    }
+
+    private void RotationAgent()
+    {
+        Vector3 inputDirection = new Vector3(managerInput.movementAgent.x, 0f, managerInput.movementAgent.y).normalized;
+
+        if (managerInput.movementAgent != Vector2.zero)
+        {
+            targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref rotationVelocity, rotationSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, rotation, 0f);
         }
     }
 
-    public override void Movement()
+    private void DirectionAgent()
     {
-        float h = direction.x;
-        float v = direction.y;
 
-        movement = new Vector3();
-        movement.Set(h, 0, v);
-        transform.Translate(movement.normalized * speedMovement * Time.deltaTime);
+        Vector3 targetDirection = Quaternion.Euler(0f, targetRotation, 0f) * Vector3.forward;
 
-        OnAddAnimationMovement?.Invoke(movement);
-    }
-
-
-    private void GetMovementDirection()
-    {
-        var cameraForewardDIrection = Camera.main.transform.forward;
-        var directionToMoveIn = Vector3.Scale(cameraForewardDIrection, (Vector3.right + Vector3.forward));
-
-        OnMovementDirection?.Invoke(directionToMoveIn.normalized);
-    }
-
-    public void HandleMovementDirection(Vector3 direction)
-    {
-        desiredRotationAngle = Vector3.Angle(transform.forward, direction);
-        var crossProduct = Vector3.Cross(transform.forward, direction).y;
-
-        if (crossProduct < 0)
-        {
-            desiredRotationAngle *= -1;
-        }
-    }
-
-    private void RotateAgent()
-    {
-        if (desiredRotationAngle > 10 || desiredRotationAngle < -10)
-        {
-            transform.Rotate(Vector3.up * desiredRotationAngle * speedRotation * Time.deltaTime);
-        }
-    }
-
-    private void OnDisable()
-    {
-        OnMovementDirection -= HandleMovementDirection;
+        characterController.Move(targetDirection.normalized * (speed * Time.deltaTime) + new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
     }
 }
