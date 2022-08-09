@@ -2,46 +2,57 @@ using UnityEngine;
 
 public class PlayerAnimations : MonoBehaviour
 {
-    internal Animator animatorPlayer;
-
-    [SerializeField] private bool isJump;
-
-    [Header("Parameters")]
-    [SerializeField] private string parameterRun;
-    [SerializeField] private string parameterJump;
-
-    private void Awake() => animatorPlayer = GetComponent<Animator>();
+    private Animator animatorPlayer;
+    private bool isAnimator;
+    private float animationBlend;
+    private int animIDSpeed;
+    private int animIDMotionSpeed;
 
     private void OnEnable()
     {
-        PlayerMovement.OnAddAnimationMovement += AddAnimationMovement;
-        ManagerInput.OnJumpPlayer += AddAnimationJump;
+        PlayerMovement.OnAnimationBlend += AnimationBlend;
     }
 
-    private void AddAnimationMovement(Vector3 refVectorMovement)
+    private void Start()
     {
-        if (animatorPlayer == null)
-            return;
+        animatorPlayer = GetComponent<Animator>();
+        isAnimator = TryGetComponent(out animatorPlayer);
 
-        if (refVectorMovement.z != 0)
-            animatorPlayer.SetBool(parameterRun, true);
-        else
-            animatorPlayer.SetBool(parameterRun, false);
-
+        AssignAnimationID();
     }
 
-    private void AddAnimationJump()
+    private void Update()
     {
-        isJump = true;
-
-        if(isJump)
-            animatorPlayer.SetTrigger(parameterJump);
+        isAnimator = TryGetComponent(out animatorPlayer);
     }
 
+    private void AssignAnimationID()
+    {
+        animIDSpeed = Animator.StringToHash("Speed");
+        animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+    }
+
+    private void AnimationBlend(float targetSpeed, float speedChangeRate, float inputMAgnitude)
+    {
+        animationBlend = Mathf.Lerp(animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
+
+        if (animationBlend < 0.01f)
+            animationBlend = 0;
+
+        IsAnimator(inputMAgnitude);
+    }
+
+    private void IsAnimator(float inputMagnitude)
+    {
+        if (isAnimator)
+        {
+            animatorPlayer.SetFloat(animIDSpeed, animationBlend);
+            animatorPlayer.SetFloat(animIDMotionSpeed, inputMagnitude);
+        }
+    }
 
     private void OnDisable()
     {
-        PlayerMovement.OnAddAnimationMovement -= AddAnimationMovement;
-        ManagerInput.OnJumpPlayer -= AddAnimationJump;
+        PlayerMovement.OnAnimationBlend -= AnimationBlend;
     }
 }

@@ -1,28 +1,48 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ManagerInput : MonoBehaviour
 {
-    internal static event Action OnJumpPlayer;
+    [Header("Character Input Values")]
+    [SerializeField] internal Vector2 movementAgent;
+    [SerializeField] internal Vector2 lockAgent;
+    [SerializeField] internal bool sprint;
 
-    private InputPlayer controls;
-    private PlayerMovement playerMovement;
+    [Header("Movement Settings")]
+    [SerializeField] internal bool analogMovement;
 
-    private void Awake()
+    [Header("Mouse Cursor Settings")]
+    public bool cursorLocked = true;
+    public bool cursorInputForLook = true;
+
+    public void OnMovement(InputValue value)
     {
-        controls = new InputPlayer();
-
-        playerMovement = GetComponent<PlayerMovement>();
-
-        Inputs();
+        MoveInput(value.Get<Vector2>());
     }
 
-    private void Inputs()
+    public void OnLook(InputValue value)
     {
-        controls.Player.Movement.performed += ctx => playerMovement.direction = ctx.ReadValue<Vector2>();
-        controls.Player.Jump.performed += ctx => OnJumpPlayer?.Invoke();
+        if (cursorInputForLook)
+        {
+            LookInput(value.Get<Vector2>());
+        }
     }
 
-    private void OnDisable() => controls.Disable();
-    private void OnEnable() => controls.Enable();
+    public void OnSprint(InputValue value)
+    {
+        SprintInput(value.isPressed);
+    }
+
+    public void MoveInput(Vector2 newMoveDirection) => movementAgent = newMoveDirection;
+    public void SprintInput(bool isActive) => sprint = isActive;
+    public void LookInput(Vector2 newLookDirection) => lockAgent = newLookDirection;
+    private void SetCursorState(bool isActive)
+    {
+        Cursor.lockState = isActive ? CursorLockMode.Locked : CursorLockMode.None;
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        SetCursorState(cursorLocked);
+    }
 }
