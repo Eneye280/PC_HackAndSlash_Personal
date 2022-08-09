@@ -5,6 +5,10 @@ public class PlayerMovement : MonoBehaviour
 {
     internal static event Action<float, float, float> OnAnimationBlend;
 
+    private ManagerInput managerInput;
+    private CharacterController characterController;
+
+    [Header("Camera")]
     [SerializeField] private Camera mainCamera;
 
     [Header("Parameter's")]
@@ -12,10 +16,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField][Range(0,50)] private float speedSprintAgent;
     [SerializeField][Range(0,50)] private float speedChangeRate;
     [SerializeField][Range(0,10)] private float rotationSmoothTime;
-
-
-    private ManagerInput managerInput;
-    private CharacterController characterController;
 
     private float speed;
     private float targetRotation;
@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovementAgent()
     {
-        float targetSpeed = managerInput.sprint ? speedSprintAgent : speedAgent;
+        float targetSpeed = managerInput.isSprint ? speedSprintAgent : speedAgent;
 
         if (managerInput.movementAgent == Vector2.zero) 
             targetSpeed = 0f;
@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
         float currentHorizontalSpeed = new Vector3(characterController.velocity.x , 0f, characterController.velocity.z).magnitude;
 
         float speedOffSet = .1f;
-        float inputMagnitude = managerInput.analogMovement ? managerInput.movementAgent.magnitude : 1f;
+        float inputMagnitude = managerInput.isAnalogMovement ? managerInput.movementAgent.magnitude : 1f;
 
         if(currentHorizontalSpeed < targetSpeed - speedOffSet || currentHorizontalSpeed > targetSpeed + speedOffSet)
         {

@@ -3,14 +3,20 @@ using UnityEngine;
 public class PlayerAnimations : MonoBehaviour
 {
     private Animator animatorPlayer;
+
     private bool isAnimator;
     private float animationBlend;
+
     private int animIDSpeed;
     private int animIDMotionSpeed;
+    private int animIDSprint;
+    private int animIDJump;
 
     private void OnEnable()
     {
-        PlayerMovement.OnAnimationBlend += AnimationBlend;
+        PlayerMovement.OnAnimationBlend += AnimationBlendMovement;
+        PlayerSprint.OnAnimationSprint += AnimationSprint;
+        PlayerJump.OnAnimationJump += AnimationJump;
     }
 
     private void Start()
@@ -30,19 +36,20 @@ public class PlayerAnimations : MonoBehaviour
     {
         animIDSpeed = Animator.StringToHash("Speed");
         animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        animIDSprint = Animator.StringToHash("isSprint");
+        animIDJump = Animator.StringToHash("isJump");
     }
 
-    private void AnimationBlend(float targetSpeed, float speedChangeRate, float inputMAgnitude)
+    private void AnimationBlendMovement(float targetSpeed, float speedChangeRate, float inputMAgnitude)
     {
         animationBlend = Mathf.Lerp(animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
 
         if (animationBlend < 0.01f)
             animationBlend = 0;
 
-        IsAnimator(inputMAgnitude);
+        AnimationMovementAgent(inputMAgnitude);
     }
-
-    private void IsAnimator(float inputMagnitude)
+    private void AnimationMovementAgent(float inputMagnitude)
     {
         if (isAnimator)
         {
@@ -51,8 +58,25 @@ public class PlayerAnimations : MonoBehaviour
         }
     }
 
+    private void AnimationSprint(bool isActive)
+    {
+        if(isAnimator)
+        {
+            animatorPlayer.SetBool(animIDSprint, isActive);
+        }
+    }
+    private void AnimationJump(bool isActive)
+    {
+        if (isAnimator)
+        {
+            animatorPlayer.SetBool(animIDJump, isActive);
+        }
+    }
+
     private void OnDisable()
     {
-        PlayerMovement.OnAnimationBlend -= AnimationBlend;
+        PlayerMovement.OnAnimationBlend -= AnimationBlendMovement;
+        PlayerSprint.OnAnimationSprint -= AnimationSprint;
+        PlayerJump.OnAnimationJump -= AnimationJump;
     }
 }
