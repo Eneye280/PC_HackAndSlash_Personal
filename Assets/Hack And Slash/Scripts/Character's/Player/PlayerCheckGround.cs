@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class PlayerCheckGround : MonoBehaviour
 {
+    private ManagerInput managerInput;
+
     [Header("Position")]
     [SerializeField] private Transform positionRaycast;
-
-    [Header("Check")]
-    [SerializeField] private bool isGround;
 
     [Header("Layer")]
     [SerializeField] private LayerMask layerGround;
@@ -19,6 +18,11 @@ public class PlayerCheckGround : MonoBehaviour
     [SerializeField] private Color colorIsGround;
     [SerializeField] private Color colorNotIsGround;
 
+    private void Awake()
+    {
+        managerInput = GetComponent<ManagerInput>();
+    }
+
     private void FixedUpdate()
     {
         CheckGround();
@@ -26,16 +30,19 @@ public class PlayerCheckGround : MonoBehaviour
 
     private void CheckGround()
     {
-        isGround = Physics.CheckSphere(positionRaycast.position, groundedRadius, (int)layerGround);
+        managerInput.isGround = Physics.CheckSphere(positionRaycast.position, groundedRadius, (int)layerGround);
     }
 
     private void OnDrawGizmos()
     {
-        if (isGround)
-            Gizmos.color = colorIsGround;
-        else
-            Gizmos.color = colorNotIsGround;
+        if (Application.isPlaying && Application.isEditor)
+        {
+            if (managerInput.isGround)
+                Gizmos.color = colorIsGround;
+            else
+                Gizmos.color = colorNotIsGround;
 
-        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y, transform.position.z), groundedRadius);
+            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y, transform.position.z), groundedRadius); 
+        }
     }
 }

@@ -8,6 +8,7 @@ public class ManagerInput : MonoBehaviour
     [SerializeField] internal Vector2 lockAgent;
     [SerializeField] internal bool isSprint;
     [SerializeField] internal bool isJump;
+    [SerializeField] internal bool isGround;
 
     [Header("Movement Settings")]
     [SerializeField] internal bool isAnalogMovement;
@@ -43,10 +44,8 @@ public class ManagerInput : MonoBehaviour
     public void SprintInput(bool isActive) => isSprint = isActive;
     public void JumpInput(bool isActive) => isJump = isActive;
     public void LookInput(Vector2 newLookDirection) => lockAgent = newLookDirection;
-    private void SetCursorState(bool isActive)
-    {
-        Cursor.lockState = isActive ? CursorLockMode.Locked : CursorLockMode.None;
-    }
+    private void SetCursorState(bool isActive) => Cursor.lockState = isActive ? CursorLockMode.Locked : CursorLockMode.None;
+
 
     private void OnApplicationFocus(bool hasFocus)
     {

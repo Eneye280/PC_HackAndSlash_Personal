@@ -8,6 +8,8 @@ public class PlayerJump : MonoBehaviour
     private ManagerInput managerInput;
     private Rigidbody rigidbodyPlayer;
 
+    [SerializeField] private float forceImpulseJump;
+
     private void Start()
     {
         managerInput = GetComponent<ManagerInput>();
@@ -17,5 +19,15 @@ public class PlayerJump : MonoBehaviour
     private void Update()
     {
         OnAnimationJump?.Invoke(managerInput.isJump);
+        Jump();
+    }
+
+    private void Jump()
+    {
+        if (managerInput.isJump)
+        {
+            rigidbodyPlayer.AddForce(Vector3.up * forceImpulseJump, ForceMode.Impulse);
+            Debug.Log("is Jump");
+        }
     }
 }
