@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
         {
             speed = targetSpeed;
         }
-
+        
         RotationAgent();
         DirectionAgent();
 

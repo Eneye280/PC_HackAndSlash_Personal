@@ -294,9 +294,9 @@ GameObject:
   - component: {fileID: 575063446}
   - component: {fileID: 575063445}
   - component: {fileID: 575063444}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -563,6 +563,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 965531322, guid: 383af3ff8506cce429c0f4b43b9cc41b, type: 3}
+      propertyPath: forceImpulseJump
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 989702207, guid: 383af3ff8506cce429c0f4b43b9cc41b, type: 3}
       propertyPath: mainCamera
       value: 
@@ -1441,7 +1445,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 1.7773019, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
